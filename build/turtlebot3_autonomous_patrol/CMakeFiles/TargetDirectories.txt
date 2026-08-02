@@ -1,0 +1,9 @@
+/home/omarads/gz_ws/src/turtlebot3-autonomous-patrol/build/turtlebot3_autonomous_patrol/CMakeFiles/uninstall.dir
+/home/omarads/gz_ws/src/turtlebot3-autonomous-patrol/build/turtlebot3_autonomous_patrol/CMakeFiles/turtlebot3_autonomous_patrol_uninstall.dir
+/home/omarads/gz_ws/src/turtlebot3-autonomous-patrol/build/turtlebot3_autonomous_patrol/CMakeFiles/test.dir
+/home/omarads/gz_ws/src/turtlebot3-autonomous-patrol/build/turtlebot3_autonomous_patrol/CMakeFiles/edit_cache.dir
+/home/omarads/gz_ws/src/turtlebot3-autonomous-patrol/build/turtlebot3_autonomous_patrol/CMakeFiles/rebuild_cache.dir
+/home/omarads/gz_ws/src/turtlebot3-autonomous-patrol/build/turtlebot3_autonomous_patrol/CMakeFiles/list_install_components.dir
+/home/omarads/gz_ws/src/turtlebot3-autonomous-patrol/build/turtlebot3_autonomous_patrol/CMakeFiles/install.dir
+/home/omarads/gz_ws/src/turtlebot3-autonomous-patrol/build/turtlebot3_autonomous_patrol/CMakeFiles/install/local.dir
+/home/omarads/gz_ws/src/turtlebot3-autonomous-patrol/build/turtlebot3_autonomous_patrol/CMakeFiles/install/strip.dir

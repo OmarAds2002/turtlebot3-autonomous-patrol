@@ -60,8 +60,8 @@ def generate_launch_description():
         arguments=[
             '-name', TURTLEBOT3_MODEL,
             '-file', urdf_path,
-            '-x', '1',
-            '-y', '5.5',
+            '-x', '2.0',
+            '-y', '6.0',
             '-z', '0.01'
         ],
         output='screen',
@@ -81,7 +81,7 @@ def generate_launch_description():
     image_bridge_cmd = Node(
         package='ros_gz_image',
         executable='image_bridge',
-        arguments=['/camera/image_raw/image', '/camera/image_raw/depth_image'],
+        arguments=['/camera/image_raw', '/camera/depth_image'],
         output='screen',
     )
 
