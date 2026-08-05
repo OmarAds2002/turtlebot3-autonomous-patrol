@@ -1,3 +1,7 @@
+# AMCL localization config — used by slam_launch.py
+# only manages map_server + amcl (no planner/controller/bt_navigator)
+# for full Nav2 stack, use nav2_params.yaml
+
 map_server:
   ros__parameters:
     yaml_filename: "/home/omarads/maps/four_rooms.yaml"
@@ -16,6 +20,7 @@ amcl:
     global_frame_id: "map"
     scan_topic: "scan"
     map_topic: "map"
+    # required in Jazzy — filter won't init without this exact string
     robot_model_type: "nav2_amcl::DifferentialMotionModel"
     laser_model_type: "likelihood_field"
     laser_max_range: 8.0
@@ -36,10 +41,12 @@ amcl:
     sigma_hit: 0.2
     tf_broadcast: true
     save_pose_rate: 0.5
+    # auto-set pose at map origin — map_frame (0,0), NOT Gazebo coords
+    # offset: map_x ≈ gz_x - 1, map_y ≈ gz_y - 5.5
     set_initial_pose: true
     initial_pose:
-      x: 1.0
-      y: 5.5
+      x: 0.0
+      y: 0.0
       z: 0.0
       yaw: 0.0
 
@@ -47,4 +54,5 @@ lifecycle_manager:
   ros__parameters:
     use_sim_time: true
     autostart: true
+    # only map_server + amcl — SLAM launch doesn't need the full Nav2 stack
     node_names: ['map_server', 'amcl']

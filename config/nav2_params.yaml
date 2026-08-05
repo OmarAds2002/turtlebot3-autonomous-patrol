@@ -1,3 +1,7 @@
+# Nav2 stack config for 4-room patrol
+# bt_navigator provides /navigate_to_pose action server (Nav2's default point-nav tree)
+# patrol_commander runs the mission-level BT separately and calls this action as a client
+
 map_server:
   ros__parameters:
     yaml_filename: "/home/omarads/maps/four_rooms.yaml"
@@ -6,6 +10,7 @@ map_server:
 amcl:
   ros__parameters:
     use_sim_time: true
+    # motion model noise — tuned for TurtleBot3 diff-drive in Gazebo
     alpha1: 0.2
     alpha2: 0.2
     alpha3: 0.2
@@ -16,6 +21,7 @@ amcl:
     global_frame_id: "map"
     scan_topic: "scan"
     map_topic: "map"
+    # required in Jazzy — filter won't init without this exact string
     robot_model_type: "nav2_amcl::DifferentialMotionModel"
     laser_model_type: "likelihood_field"
     laser_max_range: 8.0
@@ -36,6 +42,7 @@ amcl:
     sigma_hit: 0.2
     tf_broadcast: true
     save_pose_rate: 0.5
+    # auto-set pose at map origin on startup — no manual RViz click needed
     set_initial_pose: true
     initial_pose:
       x: 0.0
@@ -43,6 +50,9 @@ amcl:
       z: 0.0
       yaw: 0.0
 
+# bt_navigator acts as the navigation-layer server
+# it runs Nav2's built-in point-to-point tree — NOT our patrol tree
+# our patrol_commander calls /navigate_to_pose as an action client
 bt_navigator:
   ros__parameters:
     use_sim_time: true
@@ -51,11 +61,12 @@ bt_navigator:
     odom_topic: /odom
     bt_loop_duration: 10
     default_server_timeout: 20
-    navigators: ["navigate_to_pose", "navigate_through_poses"]
+    # only navigate_to_pose — navigate_through_poses causes duplicate ID crash in Jazzy
+    navigators: ["navigate_to_pose"]
     navigate_to_pose:
       plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
-    navigate_through_poses:
-      plugin: "nav2_bt_navigator::NavigateThroughPosesNavigator"
+    # no default_bt_xml_filename — uses Nav2's built-in tree
+    # no plugin_lib_names — custom nodes run in patrol_commander, not here
 
 planner_server:
   ros__parameters:
@@ -90,6 +101,7 @@ controller_server:
     FollowPath:
       plugin: "dwb_core::DWBLocalPlanner"
       debug_trajectory_details: true
+      # TurtleBot3 Waffle velocity limits
       min_vel_x: 0.0
       min_vel_y: 0.0
       max_vel_x: 0.26
@@ -185,7 +197,9 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.15
+        # 0.18 >= inscribed radius (0.176) — prevents wall clipping
+        # can't go much higher or 1m doorways get blocked
+        inflation_radius: 0.18
 
 global_costmap:
   global_costmap:
@@ -201,12 +215,15 @@ global_costmap:
       plugins: ["static_layer", "inflation_layer"]
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
+        # QoS: must be transient local to receive latched map from map_server
         map_subscribe_transient_local: true
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.15
+        inflation_radius: 0.18
 
+# every name here must have a matching launched node — otherwise lifecycle_manager
+# deadlocks waiting for get_state and nothing activates
 lifecycle_manager:
   ros__parameters:
     use_sim_time: true

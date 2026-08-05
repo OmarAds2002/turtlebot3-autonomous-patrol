@@ -1,3 +1,7 @@
+# four_rooms_launch.py — launches Gazebo sim with TurtleBot3 + sensor bridges
+# spawns robot in Room 1 (Gazebo coords: x=1, y=5.5)
+# map-frame equivalent: (0.0, 0.0) due to SLAM origin offset
+
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -9,21 +13,18 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    # Package directories
     pkg_dir = get_package_share_directory('turtlebot3_autonomous_patrol')
     tb3_gazebo_dir = get_package_share_directory('turtlebot3_gazebo')
     ros_gz_sim_dir = get_package_share_directory('ros_gz_sim')
 
-    # Paths
     world_path = os.path.join(pkg_dir, 'worlds', 'four_rooms.sdf')
     bridge_params = os.path.join(pkg_dir, 'config', 'bridge.yaml')
 
     TURTLEBOT3_MODEL = os.environ.get('TURTLEBOT3_MODEL', 'waffle')
     model_folder = 'turtlebot3_' + TURTLEBOT3_MODEL
-    urdf_path = os.path.join(
-    pkg_dir, 'models', model_folder, 'model.sdf'
-)
-    # ---- Gazebo server (physics) ----
+    urdf_path = os.path.join(pkg_dir, 'models', model_folder, 'model.sdf')
+
+    # Gazebo server (physics, headless)
     gzserver_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(ros_gz_sim_dir, 'launch', 'gz_sim.launch.py')
@@ -34,7 +35,7 @@ def generate_launch_description():
         }.items()
     )
 
-    # ---- Gazebo client (GUI) ----
+    # Gazebo client (GUI window)
     gzclient_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(ros_gz_sim_dir, 'launch', 'gz_sim.launch.py')
@@ -45,7 +46,7 @@ def generate_launch_description():
         }.items()
     )
 
-    # ---- Robot state publisher (TF from URDF) ----
+    # TF from URDF — publishes robot_description and joint transforms
     robot_state_publisher_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(tb3_gazebo_dir, 'launch', 'robot_state_publisher.launch.py')
@@ -53,7 +54,7 @@ def generate_launch_description():
         launch_arguments={'use_sim_time': 'true'}.items()
     )
 
-    # ---- Spawn TurtleBot3 in Room 1 ----
+    # spawn robot in Room 1 (Gazebo coords)
     spawn_robot_cmd = Node(
         package='ros_gz_sim',
         executable='create',
@@ -67,7 +68,8 @@ def generate_launch_description():
         output='screen',
     )
 
-    # ---- ros_gz_bridge (sensor + cmd topics) ----
+    # ros_gz_bridge — bridges all sensor and command topics
+    # CRITICAL: cmd_vel uses Twist, not TwistStamped (see bridge.yaml)
     bridge_cmd = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
@@ -77,7 +79,7 @@ def generate_launch_description():
         output='screen',
     )
 
-    # ---- Image bridge (camera) ----
+    # image bridge for RGB and depth camera topics
     image_bridge_cmd = Node(
         package='ros_gz_image',
         executable='image_bridge',
@@ -85,7 +87,7 @@ def generate_launch_description():
         output='screen',
     )
 
-    # ---- Environment: model paths ----
+    # Gazebo needs to find TurtleBot3 and custom models
     set_tb3_models = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH',
         os.path.join(tb3_gazebo_dir, 'models')
@@ -98,19 +100,16 @@ def generate_launch_description():
 
     ld = LaunchDescription()
 
-    # Environment must be set before Gazebo starts
+    # environment must be set before Gazebo starts
     ld.add_action(set_tb3_models)
     ld.add_action(set_custom_models)
 
-    # Launch Gazebo
     ld.add_action(gzserver_cmd)
     ld.add_action(gzclient_cmd)
 
-    # Spawn robot + publishers
     ld.add_action(spawn_robot_cmd)
     ld.add_action(robot_state_publisher_cmd)
 
-    # Bridges
     ld.add_action(bridge_cmd)
     ld.add_action(image_bridge_cmd)
 

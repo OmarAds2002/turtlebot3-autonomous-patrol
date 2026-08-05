@@ -1,3 +1,7 @@
+# slam_toolbox async mode config
+# NOTE: slam_toolbox in ROS2 Jazzy is a lifecycle node
+# must configure -> activate via launch (not auto-started)
+
 slam_toolbox:
   ros__parameters:
     solver_plugin: "solver_plugins::CeresSolver"
@@ -9,5 +13,6 @@ slam_toolbox:
     map_frame: "map"
     use_sim_time: true
     mode: "mapping"
+    # how far/much to rotate before adding a new scan
     minimum_travel_distance: 0.5
     minimum_travel_heading: 0.5

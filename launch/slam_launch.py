@@ -1,3 +1,8 @@
+# slam_launch.py — launches slam_toolbox for mapping the 4-room world
+# slam_toolbox in ROS2 Jazzy is a lifecycle node — it won't start processing
+# until it transitions through configure -> activate
+# this launch handles that automatically via LifecycleNode + EmitEvent
+
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -13,6 +18,7 @@ def generate_launch_description():
     pkg_dir = get_package_share_directory('turtlebot3_autonomous_patrol')
     slam_params = os.path.join(pkg_dir, 'config', 'slam_params.yaml')
 
+    # lifecycle node — starts in 'unconfigured' state
     slam_node = LifecycleNode(
         package='slam_toolbox',
         executable='async_slam_toolbox_node',
@@ -22,6 +28,7 @@ def generate_launch_description():
         namespace='',
     )
 
+    # auto-configure on launch
     configure_event = EmitEvent(
         event=ChangeState(
             lifecycle_node_matcher=lambda node: node == slam_node,
@@ -29,6 +36,7 @@ def generate_launch_description():
         )
     )
 
+    # auto-activate once configured (unconfigured -> inactive -> active)
     activate_event = RegisterEventHandler(
         OnStateTransition(
             target_lifecycle_node=slam_node,
