@@ -3,7 +3,7 @@
 A behavior-tree-driven autonomous patrol robot in Gazebo Harmonic with ROS2 Jazzy. The robot navigates a 4-room environment, detects objects, manages battery, and executes recovery behaviors — all orchestrated by a custom mission-level behavior tree running in its own process.
 
 
-![Demo](docs/demo.gif)
+![Demo](docs/demo.mp4)
 
 ## Architecture
 
