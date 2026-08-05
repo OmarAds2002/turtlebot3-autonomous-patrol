@@ -17,7 +17,7 @@ So this project runs two layers:
 - **Navigation layer** (Nav2): `bt_navigator` provides `/navigate_to_pose` using Nav2's built-in point-nav tree. The mission tree calls this action as a client.
 
 
-[architecture](docs/architecture.png)
+![architecture](docs/architecture.png)
 
 ```
 patrol_commander (mission layer)
