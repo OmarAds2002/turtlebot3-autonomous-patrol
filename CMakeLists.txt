@@ -42,7 +42,7 @@ target_include_directories(patrol_commander PUBLIC
 )
 
 # --- Install ---
-install(DIRECTORY worlds models launch config
+install(DIRECTORY worlds models launch config maps
   DESTINATION share/${PROJECT_NAME}/
 )
 install(TARGETS patrol_bt_nodes patrol_commander

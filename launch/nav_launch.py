@@ -21,12 +21,12 @@ from launch.actions import ExecuteProcess
 def generate_launch_description():
     pkg_dir = get_package_share_directory('turtlebot3_autonomous_patrol')
     nav2_params = os.path.join(pkg_dir, 'config', 'nav2_params.yaml')
-
+    map_path = os.path.join(pkg_dir, 'maps', 'four_rooms.yaml')
     map_server_node = Node(
         package='nav2_map_server',
         executable='map_server',
         name='map_server',
-        parameters=[nav2_params],
+        parameters=[nav2_params, {'yaml_filename': map_path}],
         output='screen',
     )
 
