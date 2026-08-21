@@ -118,7 +118,7 @@ def generate_launch_description():
     ld.add_action(controller_node)
     ld.add_action(behavior_node)
     ld.add_action(bt_navigator_node)
-    # ld.add_action(patrol_commander_node)
+    ld.add_action(patrol_commander_node)
     ld.add_action(waypoint_follower_node)
     ld.add_action(lifecycle_manager_node)
     ld.add_action(rviz_node)

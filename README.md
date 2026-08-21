@@ -88,7 +88,10 @@ All nodes publish status to `/bt_log` for real-time narration during demos.
 ## Quickstart
 
 ```bash
-# Prerequisites: ROS2 Jazzy, Gazebo Harmonic, Nav2, slam_toolbox, TurtleBot3 packages
+# Prerequisites: ROS2 Jazzy, Gazebo Harmonic, Nav2, TurtleBot3 packages
+
+# Set the robot model
+export TURTLEBOT3_MODEL=waffle
 
 # Build
 cd ~/gz_ws
