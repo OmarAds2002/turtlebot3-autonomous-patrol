@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.15)
 project(turtlebot3_autonomous_patrol)
 
 find_package(ament_cmake REQUIRED)
@@ -13,13 +13,13 @@ find_package(geometry_msgs REQUIRED)
 add_library(patrol_bt_nodes SHARED
   src/register_nodes.cpp
 )
-ament_target_dependencies(patrol_bt_nodes
-  behaviortree_cpp
-  rclcpp
-  rclcpp_action
-  std_msgs
-  nav2_msgs
-  geometry_msgs
+target_link_libraries(patrol_bt_nodes PRIVATE
+  behaviortree_cpp::behaviortree_cpp
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  std_msgs::std_msgs__rosidl_typesupport_cpp
+  nav2_msgs::nav2_msgs__rosidl_typesupport_cpp
+  geometry_msgs::geometry_msgs__rosidl_typesupport_cpp
 )
 target_include_directories(patrol_bt_nodes PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -28,13 +28,13 @@ target_include_directories(patrol_bt_nodes PUBLIC
 
 # --- Executable ---
 add_executable(patrol_commander src/patrol_commander.cpp)
-ament_target_dependencies(patrol_commander
-  behaviortree_cpp
-  rclcpp
-  rclcpp_action
-  std_msgs
-  nav2_msgs
-  geometry_msgs
+target_link_libraries(patrol_commander PRIVATE
+  behaviortree_cpp::behaviortree_cpp
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  std_msgs::std_msgs__rosidl_typesupport_cpp
+  nav2_msgs::nav2_msgs__rosidl_typesupport_cpp
+  geometry_msgs::geometry_msgs__rosidl_typesupport_cpp
 )
 target_include_directories(patrol_commander PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
